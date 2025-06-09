@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.BishaixiangmDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.bishaixiangm_name as bishaixiangmName
+        ,a.bishaixiangm_types as bishaixiangmTypes
+        ,a.bishaixiangm_number as bishaixiangmNumber
+        ,a.bishaixiangm_time as bishaixiangmTime
+        ,a.bishaixiangm_photo as bishaixiangmPhoto
+        ,a.bishaixiangm_content as bishaixiangmContent
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.BishaixiangmView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM bishaixiangm  a
+
+        <where>
+            <if test=" params.bishaixiangmName != '' and params.bishaixiangmName != null and params.bishaixiangmName != 'null' ">
+                and a.bishaixiangm_name like CONCAT('%',#{params.bishaixiangmName},'%')
+            </if>
+            <if test="params.bishaixiangmTypes != null">
+                and a.bishaixiangm_types = #{params.bishaixiangmTypes}
+            </if>
+            <if test="params.bishaixiangmNumberStart != null">
+                <![CDATA[  and a.bishaixiangm_number >= #{params.bishaixiangmNumberStart}   ]]>
+            </if>
+            <if test="params.bishaixiangmNumberEnd != null">
+                <![CDATA[  and a.bishaixiangm_number <= #{params.bishaixiangmNumberEnd}   ]]>
+            </if>
+            <if test=" params.bishaixiangmTimeStart != '' and params.bishaixiangmTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.bishaixiangm_time) >= UNIX_TIMESTAMP(#{params.bishaixiangmTimeStart}) ]]>
+            </if>
+            <if test=" params.bishaixiangmTimeEnd != '' and params.bishaixiangmTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.bishaixiangm_time) <= UNIX_TIMESTAMP(#{params.bishaixiangmTimeEnd}) ]]>
+            </if>
+            <if test=" params.bishaixiangmContent != '' and params.bishaixiangmContent != null and params.bishaixiangmContent != 'null' ">
+                and a.bishaixiangm_content like CONCAT('%',#{params.bishaixiangmContent},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>

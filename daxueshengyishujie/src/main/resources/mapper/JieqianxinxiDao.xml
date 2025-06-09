@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.JieqianxinxiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.jieqianxinxi_name as jieqianxinxiName
+        ,a.jieqianxinxi_photo as jieqianxinxiPhoto
+        ,a.insert_time as insertTime
+        ,a.jieqianxinxi_content as jieqianxinxiContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.JieqianxinxiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM jieqianxinxi  a
+
+        <where>
+            <if test=" params.jieqianxinxiName != '' and params.jieqianxinxiName != null and params.jieqianxinxiName != 'null' ">
+                and a.jieqianxinxi_name like CONCAT('%',#{params.jieqianxinxiName},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test=" params.jieqianxinxiContent != '' and params.jieqianxinxiContent != null and params.jieqianxinxiContent != 'null' ">
+                and a.jieqianxinxi_content like CONCAT('%',#{params.jieqianxinxiContent},'%')
+            </if>
+
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>
